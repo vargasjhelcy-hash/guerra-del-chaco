@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senderos del Chaco - Decisiones Históricas</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Georgia, 'Segoe UI', serif;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 30% 20%, #4a5a2e, #2a3318 60%, #141a0c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  color: #2b1f0f;
+}
+
+.game {
+  width: 100%;
+  max-width: 950px;
+  background: #f4ecd8;
+  border: 5px solid #2a3318;
+  border-radius: 14px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.7);
+  overflow: hidden;
+}
+
+header {
+  background: linear-gradient(90deg,#2a3318,#4a5a2e);
+  color: #f4ecd8;
+  padding: 16px 22px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+header h1 {
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+
+.turn {
+  font-size: .82rem;
+  background: rgba(0,0,0,.3);
+  padding: 6px 12px;
+  border-radius: 14px;
+}
+
+.meters {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 12px;
+}
+
+.meter {
+  font-size: .76rem;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #e8dcb8;
+}
+
+.bar {
+  height: 10px;
+  background: rgba(0,0,0,.4);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width .5s;
+}
+
+.tension { background: #c9a227; }
+.tension.high { background: #e53935; }
+.diplo { background: #4fc3f7; }
+.pres { background: #81c784; }
+
+.screen {
+  padding: 25px 28px;
+  min-height: 490px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tag {
+  display: inline-block;
+  background: #2a3318;
+  color: #f4ecd8;
+  font-size: .68rem;
+  padding: 5px 12px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+h2 {
+  color: #2a3318;
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+}
+
+.context {
+  line-height: 1.6;
+  font-size: .96rem;
+  margin-bottom: 8px;
+  color: #3a2c14;
+}
+
+.story {
+  background: #e8dcb8;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border-left: 5px solid #7a5c2e;
+  margin-bottom: 16px;
+}
+
+.historical-photo {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #7a5c2e;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  margin-bottom: 10px;
+  background: #2a3318;
+}
+
+.photo-caption {
+  font-size: .7rem;
+  color: #7a5c2e;
+  text-align: right;
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+.choices {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.choice {
+  background: white;
+  border: 2px solid #c2a878;
+  border-radius: 10px;
+  padding: 13px;
+  cursor: pointer;
+  text-align: left;
+  font-size: .94rem;
+  transition: .2s;
+  color: #2b1f0f;
+}
+
+.choice:hover:not(:disabled) {
+  background: #f9f1dd;
+  border-color: #7a5c2e;
+  transform: translateX(4px);
+}
+
+.choice:disabled {
+  opacity: .65;
+  cursor: default;
+}
+
+.ch-title {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ch-sub {
+  font-size: .8rem;
+  color: #7a5c2e;
+  font-style: italic;
+}
+
+.outcome {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: .91rem;
+  line-height: 1.55;
+  display: none;
+  background: #e8dcb8;
+  border-left: 5px solid #4a5a2e;
+}
+
+.outcome.show {
+  display: block;
+  animation: fade .4s;
+}
+
+.delta {
+  margin-top: 8px;
+  font-size: .85rem;
+  font-weight: bold;
+}
+
+.delta span {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.up { color: #c62828; }
+.down { color: #2e7d32; }
+.neu { color: #7a5c2e; }
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn {
+  margin-top: 17px;
+  align-self: flex-end;
+  background: linear-gradient(90deg,#4a5a2e,#7a8c3a);
+  color: white;
+  border: none;
+  padding: 12px 27px;
+  font-size: .95rem;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.btn:hover {
+  filter: brightness(1.12);
+}
+
+.btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.country-pick {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.country-card {
+  background: white;
+  border: 3px solid #c2a878;
+  border-radius: 14px;
+  padding: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: .2s;
+}
+
+.country-card:hover {
+  border-color: #7a5c2e;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.2);
+}
+
+.flag {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #2a3318;
+}
+
+.desc {
+  font-size: .8rem;
+  color: #6b5a3a;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.center {
+  text-align: center;
+}
+
+.final-badge {
+  font-size: 3.5rem;
+  text-align: center;
+  margin: 10px;
+}
+
+.final-title {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #2a3318;
+  margin-bottom: 8px;
+}
+
+.final-sub {
+  text-align: center;
+  font-size: .95rem;
+  color: #6b5a3a;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.final-box {
+  background: #e8dcb8;
+  padding: 16px;
+  border-radius: 12px;
+  border-left: 5px solid #7a5c2e;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  font-size: .93rem;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.result-item {
+  background: white;
+  border: 1px solid #c2a878;
+  border-radius: 9px;
+  padding: 12px 5px;
+  text-align: center;
+  font-size: .82rem;
+}
+
+.result-item strong {
+  display: block;
+  font-size: 1.3rem;
+  color: #4a5a2e;
+  margin-top: 5px;
+}
+
+footer {
+  background: #2a3318;
+  color: #a8b080;
+  padding: 10px;
+  text-align: center;
+  font-size: .7rem;
+  letter-spacing: 1px;
+}
+
+@media(max-width:600px) {
+  body { padding: 8px; }
+  .screen { padding: 18px 14px; }
+  .country-pick { grid-template-columns: 1fr; }
+  .meters { gap: 5px; }
+  .meter { font-size: .65rem; }
+  .historical-photo { height: 210px; }
+  header h1 { font-size: .95rem; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<header>
+  <div class="top">
+    <h1>⚔️ SENDEROS DEL CHACO</h1>
+    <div class="turn" id="turnLabel">Elige tu país</div>
+  </div>
+
+  <div class="meters">
+
+    <div class="meter">
+      <div class="label">
+        <span>🔥 Tensión</span>
+        <span id="tVal">15</span>
+      </div>
+      <div class="bar">
+        <div class="fill tension" id="tBar" style="width:15%"></div>
+      </div>
+    </div>
+
+    <div class="meter">
+      <div class="label">
+        <span>🕊️ Diplomacia</span>
+        <span id="dVal">50</span>
+      </div>
+      <div class="bar">
+        <div class="fill diplo" id="dBar" style="width:50%"></div>
+      </div>
+    </div>
+
+    <div class="meter">
+      <div class="label">
+        <span>🎖️ Presencia</span>
+        <span id="pVal">30</span>
+      </div>
+      <div class="bar">
+        <div class="fill pres" id="pBar" style="width:30%"></div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="screen" id="screen"></div>
+
+<footer>
+SENDEROS DEL CHACO · ANTECEDENTES DE LA GUERRA DEL CHACO · 1932–1935
+</footer>
+
+</div>
+
+<script>
+
+// ================= ESTADO DEL JUEGO =================
+
+const state = {
+  tension: 15,
+  diplomacy: 50,
+  presence: 30,
+  turn: 0,
+  country: null,
+  choices: []
+};
+
+const $ = id => document.getElementById(id);
+const screen = $('screen');
+
+// ================= ACONTECIMIENTOS =================
+
+const EVENTS = [
+
+{
+tag: "Antecedente 1 · Frontera sin definir",
+title: "El Chaco sin dueño",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Mapa_de_la_Guerra_del_Chaco.jpg",
+caption: "Mapa histórico de la región del Chaco Boreal.",
+story: "Durante las primeras décadas del siglo XX, Bolivia y Paraguay mantenían una disputa territorial por el Chaco Boreal. No existía una frontera definitivamente aceptada por ambos países.",
+choices: [
+{
+t: "Apostar por negociaciones diplomáticas",
+s: "Buscar un acuerdo pacífico.",
+r: "La diplomacia permite abrir espacios de diálogo, aunque la disputa territorial continúa.",
+d: [-8,15,0]
+},
+{
+t: "Fortalecer la presencia administrativa",
+s: "Establecer mayor presencia en la región.",
+r: "Se fortalece la presencia nacional, pero Paraguay puede interpretar la medida como una provocación.",
+d: [10,-5,12]
+},
+{
+t: "Proponer una comisión de límites",
+s: "Investigar y discutir la frontera.",
+r: "La propuesta favorece el diálogo y permite buscar argumentos históricos y geográficos.",
+d: [-5,12,5]
+}
+]
+},
+
+{
+tag: "Antecedente 2 · Tratados y negociaciones",
+title: "El tratado de límites",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Paz_del_Chaco.jpg",
+caption: "Referencia histórica a las negociaciones de paz.",
+story: "A lo largo de los años se realizaron negociaciones y acuerdos para solucionar la disputa. Sin embargo, las diferencias sobre la soberanía del territorio impidieron alcanzar una solución definitiva.",
+choices: [
+{
+t: "Continuar las negociaciones",
+s: "Buscar un acuerdo mediante representantes.",
+r: "Se mantiene abierta la posibilidad de una solución diplomática.",
+d: [-10,15,0]
+},
+{
+t: "Rechazar las propuestas contrarias",
+s: "Defender la posición nacional.",
+r: "La posición se mantiene firme, pero disminuye la confianza entre los países.",
+d: [12,-12,5]
+},
+{
+t: "Solicitar mediación internacional",
+s: "Buscar apoyo de otros países.",
+r: "La mediación puede facilitar conversaciones y reducir las tensiones.",
+d: [-8,12,0]
+}
+]
+},
+
+{
+tag: "Antecedente 3 · Incidente de Vanguardia",
+title: "El incidente de Vanguardia",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Paraguayos_en_alihuat%C3%A1.jpg",
+caption: "Fotografía de tropas paraguayas durante el conflicto.",
+story: "En diciembre de 1928 ocurrió el incidente de Vanguardia, cuando fuerzas paraguayas atacaron el fortín boliviano Vanguardia. El hecho provocó una grave crisis diplomática y aumentó la tensión entre ambos países.",
+choices: [
+{
+t: "Exigir explicaciones diplomáticas",
+s: "Reclamar por los acontecimientos.",
+r: "Se busca una respuesta oficial y se mantiene abierta la negociación.",
+d: [-5,12,0]
+},
+{
+t: "Suspender temporalmente las relaciones",
+s: "Mostrar descontento ante el ataque.",
+r: "La crisis diplomática se profundiza y disminuye la confianza.",
+d: [12,-10,0]
+},
+{
+t: "Buscar una solución mediante mediadores",
+s: "Evitar una escalada del conflicto.",
+r: "La intervención diplomática contribuye a reducir la tensión.",
+d: [-12,15,0]
+}
+]
+},
+
+{
+tag: "Antecedente 4 · El petróleo",
+title: "Oro negro bajo el monte",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Guidochasecolor.jpg",
+caption: "Fotografía histórica de la Guerra del Chaco.",
+story: "El interés por posibles recursos petrolíferos también influyó en la disputa. La Standard Oil desarrollaba actividades petroleras en Bolivia, mientras que la Royal Dutch Shell tenía intereses en Paraguay. La existencia y el valor de las reservas chaqueñas fueron objeto de controversia.",
+choices: [
+{
+t: "Investigar los recursos de la región",
+s: "Priorizar información geográfica y económica.",
+r: "La investigación permite comprender mejor los intereses económicos.",
+d: [0,8,10]
+},
+{
+t: "Impulsar la cooperación económica",
+s: "Buscar acuerdos sobre recursos.",
+r: "La cooperación puede reducir los motivos de enfrentamiento.",
+d: [-8,14,5]
+},
+{
+t: "Considerar los recursos como asunto estratégico",
+s: "Dar prioridad al interés nacional.",
+r: "Aumenta la importancia del territorio en la política nacional y crece la tensión.",
+d: [12,-8,8]
+}
+]
+},
+
+{
+tag: "Antecedente 5 · Estrategia geográfica",
+title: "La salida al río Paraguay",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Chaco14.jpg",
+caption: "Paisaje del territorio chaqueño.",
+story: "Bolivia, que había perdido su litoral en la Guerra del Pacífico, consideraba importante conseguir una conexión con el océano Atlántico mediante los ríos Paraguay y Paraná. Esta aspiración aumentó el valor estratégico del Chaco Boreal.",
+choices: [
+{
+t: "Estudiar acuerdos de navegación",
+s: "Buscar cooperación regional.",
+r: "La propuesta permite explorar alternativas comerciales y diplomáticas.",
+d: [-8,12,0]
+},
+{
+t: "Desarrollar estudios geográficos",
+s: "Conocer mejor las vías de comunicación.",
+r: "Se obtiene mayor conocimiento de la región y sus posibilidades.",
+d: [0,8,10]
+},
+{
+t: "Mantener una posición territorial firme",
+s: "Defender los intereses nacionales.",
+r: "Se fortalece la postura nacional, pero crece la tensión diplomática.",
+d: [10,-8,10]
+}
+]
+},
+
+{
+tag: "Antecedente 6 · Los fortines",
+title: "La política de fortines",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Monumento_referido_a_la_Guerra_del_Chaco_(Fort%C3%ADn_Boquer%C3%B3n).jpg",
+caption: "Monumento conmemorativo del Fortín Boquerón.",
+story: "Bolivia y Paraguay establecieron fortines en diferentes sectores del Chaco. Estos puestos servían para marcar presencia, vigilar el territorio y sostener sus respectivas reclamaciones de soberanía.",
+choices: [
+{
+t: "Mantener los fortines existentes",
+s: "Conservar la presencia territorial.",
+r: "Se mantiene la presencia, aunque persisten las diferencias entre los países.",
+d: [3,0,8]
+},
+{
+t: "Proponer una zona de vigilancia acordada",
+s: "Buscar medidas de confianza.",
+r: "La propuesta puede ayudar a prevenir nuevos incidentes.",
+d: [-10,13,0]
+},
+{
+t: "Establecer conversaciones sobre los fortines",
+s: "Evitar enfrentamientos.",
+r: "El diálogo permite discutir la situación de los puestos fronterizos.",
+d: [-8,12,0]
+}
+]
+},
+
+{
+tag: "Antecedente 7 · La logística del Chaco",
+title: "La sed en el monte",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Chaco14.jpg",
+caption: "Terreno chaqueño, caracterizado por el calor y la escasez de agua.",
+story: "El Chaco Boreal presentaba condiciones naturales difíciles: altas temperaturas, vegetación espesa, escasez de agua y grandes distancias. Estas características dificultaban el transporte y las comunicaciones.",
+choices: [
+{
+t: "Realizar estudios sobre el territorio",
+s: "Comprender las condiciones naturales.",
+r: "El conocimiento geográfico permite planificar mejor las actividades en la región.",
+d: [0,5,10]
+},
+{
+t: "Promover cooperación para el abastecimiento",
+s: "Buscar soluciones humanitarias.",
+r: "La cooperación puede evitar que las dificultades logísticas agraven la crisis.",
+d: [-8,12,0]
+},
+{
+t: "Ignorar las dificultades naturales",
+s: "Mantener los planes sin modificaciones.",
+r: "La falta de previsión aumenta los problemas de organización.",
+d: [8,-5,-8]
+}
+]
+},
+
+{
+tag: "Antecedente 8 · Laguna Pitiantuta",
+title: "El incidente de Laguna Pitiantuta",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Paraguayos_en_alihuat%C3%A1.jpg",
+caption: "Imagen de tropas paraguayas durante la Guerra del Chaco.",
+story: "En junio de 1932, las fuerzas bolivianas ocuparon el fortín paraguayo Carlos Antonio López, ubicado en la zona de Laguna Pitiantuta. Paraguay respondió recuperando el puesto. Este incidente agravó la crisis y fue uno de los acontecimientos que precedieron al estallido de la guerra.",
+choices: [
+{
+t: "Buscar una salida diplomática inmediata",
+s: "Evitar que el incidente se extienda.",
+r: "La negociación ofrece una oportunidad para detener la escalada.",
+d: [-12,15,0]
+},
+{
+t: "Solicitar una investigación internacional",
+s: "Aclarar lo sucedido.",
+r: "Se busca establecer responsabilidades y abrir un diálogo.",
+d: [-8,12,0]
+},
+{
+t: "Mantener una postura de firmeza",
+s: "Defender la posición nacional.",
+r: "La tensión aumenta y se reducen las posibilidades de acuerdo.",
+d: [15,-10,5]
+}
+]
+},
+
+{
+tag: "Antecedente 9 · Escalada final",
+title: "La hora de la verdad",
+img: "https://commons.wikimedia.org/wiki/Special:FilePath/Guidochasecolor.jpg",
+caption: "Fotografía histórica de la Guerra del Chaco.",
+story: "Después de años de disputas, incidentes fronterizos y negociaciones fallidas, la tensión entre Bolivia y Paraguay llegó a un punto crítico. En septiembre de 1932 comenzó la batalla de Boquerón, dando inicio a la fase abierta de la Guerra del Chaco.",
+choices: [
+{
+t: "Insistir en una solución negociada",
+s: "Priorizar la paz y la mediación.",
+r: "La decisión representa un esfuerzo por evitar mayores pérdidas humanas.",
+d: [-12,15,0]
+},
+{
+t: "Prepararse para una crisis prolongada",
+s: "Organizar los recursos nacionales.",
+r: "Se reconoce la gravedad de la situación y la necesidad de organización.",
+d: [8,-3,8]
+},
+{
+t: "Solicitar una mediación regional",
+s: "Buscar apoyo para detener el conflicto.",
+r: "La propuesta busca una salida diplomática ante una crisis cada vez más grave.",
+d: [-10,14,0]
+}
+]
+}
+
+];
+
+// ================= FUNCIONES =================
+
+function clamp(v) {
+  return Math.max(0,Math.min(100,v));
+}
+
+function updateMeters() {
+  state.tension=clamp(state.tension);
+  state.diplomacy=clamp(state.diplomacy);
+  state.presence=clamp(state.presence);
+
+  $('tVal').textContent=Math.round(state.tension);
+  $('dVal').textContent=Math.round(state.diplomacy);
+  $('pVal').textContent=Math.round(state.presence);
+
+  $('tBar').style.width=state.tension+'%';
+  $('dBar').style.width=state.diplomacy+'%';
+  $('pBar').style.width=state.presence+'%';
+
+  $('tBar').classList.toggle('high',state.tension>=70);
+}
+
+// ================= PANTALLA INICIAL =================
+
+function startScreen() {
+  state.tension=15;
+  state.diplomacy=50;
+  state.presence=30;
+  state.turn=0;
+  state.country=null;
+  state.choices=[];
+
+  updateMeters();
+  $('turnLabel').textContent='Elige tu país';
+
+  screen.innerHTML=`
+    <div class="center">
+      <span class="tag">Prólogo histórico</span>
+    </div>
+
+    <h2 class="center">Elige tu país</h2>
+
+    <p class="context center">
+      Asume el liderazgo de una nación en vísperas de la Guerra del Chaco (1932–1935).
+      Tus decisiones modificarán los indicadores de tensión, diplomacia y presencia.
+    </p>
+
+    <div class="country-pick">
+
+      <div class="country-card" onclick="chooseCountry('Bolivia')">
+        <div class="flag">🇧🇴</div>
+        <div class="name">Bolivia</div>
+        <div class="desc">
+          Busca consolidar su presencia en el Chaco y alcanzar una conexión fluvial hacia el Atlántico.
+        </div>
+      </div>
+
+      <div class="country-card" onclick="chooseCountry('Paraguay')">
+        <div class="flag">🇵🇾</div>
+        <div class="name">Paraguay</div>
+        <div class="desc">
+          Defiende sus reclamaciones territoriales y su presencia histórica en el Chaco Boreal.
+        </div>
+      </div>
+
+    </div>
+
+    <p class="context center">
+      <i>Tu misión es comprender las decisiones y acontecimientos que precedieron a la guerra.</i>
+    </p>
+  `;
+}
+
+function chooseCountry(c) {
+  state.country=c;
+  showEvent();
+}
+
+// ================= MOSTRAR ACONTECIMIENTOS =================
+
+function showEvent() {
+
+  if(state.turn>=EVENTS.length) {
+    finalScreen();
+    return;
+  }
+
+  const ev=EVENTS[state.turn];
+
+  $('turnLabel').textContent=
+    Turno ${state.turn+1} / ${EVENTS.length} · ${state.country};
+
+  screen.innerHTML=`
+    <span class="tag">${ev.tag}</span>
+
+    <h2>${ev.title}</h2>
+
+    <img
+      class="historical-photo"
+      src="${ev.img}"
+      alt="${ev.title}"
+      onerror="this.onerror=null;this.src='https://placehold.co/900x400/2a3318/f4ecd8?text=Imagen+historica+no+disponible';"
+    >
+
+    <div class="photo-caption">${ev.caption}</div>
+
+    <div class="story">
+      <p class="context">${ev.story}</p>
+    </div>
+
+    <p class="context"><b>¿Qué decisión tomarías?</b></p>
+
+    <div class="choices" id="choices"></div>
+
+    <div class="outcome" id="outcome"></div>
+
+    <button class="btn" id="nextBtn" disabled onclick="nextEvent()">
+      CONTINUAR ➜
+    </button>
+  `;
+
+  const cont=$('choices');
+
+  ev.choices.forEach((ch,i)=>{
+    const b=document.createElement('button');
+    b.className='choice';
+
+    b.innerHTML=`
+      <span class="ch-title">${ch.t}</span>
+      <span class="ch-sub">${ch.s}</span>
+    `;
+
+    b.onclick=()=>pick(i);
+    cont.appendChild(b);
+  });
+}
+
+// ================= SELECCIONAR DECISIÓN =================
+
+function pick(i) {
+
+  const ev=EVENTS[state.turn];
+  const ch=ev.choices[i];
+
+  state.tension+=ch.d[0];
+  state.diplomacy+=ch.d[1];
+  state.presence+=ch.d[2];
+
+  state.choices.push(ch.t);
+
+  updateMeters();
+
+  document.querySelectorAll('.choice').forEach(b=>{
+    b.disabled=true;
+  });
+
+  const delta=ch.d.map(n=>{
+    const sign=n>0?'+':'';
+    const color=n>0?'up':n<0?'down':'neu';
+    return <span class="${color}">${sign}${n}</span>;
+  });
+
+  const outcome=$('outcome');
+
+  outcome.innerHTML=`
+    <b>Consecuencia de tu decisión:</b>
+
+    <p>${ch.r}</p>
+
+    <div class="delta">
+      🔥 Tensión: ${delta[0]}
+      🕊️ Diplomacia: ${delta[1]}
+      🎖️ Presencia: ${delta[2]}
+    </div>
+  `;
+
+  outcome.classList.add('show');
+
+  $('nextBtn').disabled=false;
+}
+
+// ================= SIGUIENTE ACONTECIMIENTO =================
+
+function nextEvent() {
+  state.turn++;
+  showEvent();
+}
+
+// ================= RESULTADOS FINALES =================
+
+function finalScreen() {
+
+  $('turnLabel').textContent='Fin de la partida';
+
+  let title,emoji,description;
+
+  if(state.diplomacy>=65 && state.tension<=40) {
+
+    title='El camino de la diplomacia';
+    emoji='🕊️';
+
+    description='Tus decisiones priorizaron el diálogo, la mediación y la búsqueda de acuerdos. Aunque la crisis histórica no pudo evitarse, tu estrategia representa un esfuerzo por alcanzar una solución pacífica.';
+
+  } else if(state.tension>=70) {
+
+    title='Una crisis de grandes dimensiones';
+    emoji='⚠️';
+
+    description='Las decisiones aumentaron considerablemente las tensiones. Las diferencias territoriales y los incidentes fronterizos hicieron cada vez más difícil encontrar una solución pacífica.';
+
+  } else if(state.presence>=65) {
+
+    title='La importancia del territorio';
+    emoji='🎖️';
+
+    description='Tus decisiones dieron prioridad a la presencia territorial y al conocimiento geográfico. El Chaco tenía una gran importancia estratégica para ambos países.';
+
+  } else {
+
+    title='Un equilibrio difícil';
+    emoji='📜';
+
+    description='Tus decisiones combinaron diplomacia, presencia territorial y firmeza nacional. La disputa histórica demuestra lo difícil que era alcanzar un acuerdo definitivo.';
+  }
+
+  screen.innerHTML=`
+
+    <span class="tag">Conclusión histórica</span>
+
+    <div class="final-badge">${emoji}</div>
+
+    <h2 class="final-title">${title}</h2>
+
+    <p class="final-sub">
+      Partida finalizada · ${state.country}
+    </p>
+
+    <div class="final-box">
+      <b>Resultado de tus decisiones</b>
+      <p>${description}</p>
+    </div>
+
+    <div class="result-grid">
+
+      <div class="result-item">
+        🔥 Tensión
+        <strong>${Math.round(state.tension)}%</strong>
+      </div>
+
+      <div class="result-item">
+        🕊️ Diplomacia
+        <strong>${Math.round(state.diplomacy)}%</strong>
+      </div>
+
+      <div class="result-item">
+        🎖️ Presencia
+        <strong>${Math.round(state.presence)}%</strong>
+      </div>
+
+    </div>
+
+    <div class="final-box" style="margin-top:15px">
+      <b>Reflexión histórica</b>
+
+      <p>
+        La Guerra del Chaco (1932–1935) fue un conflicto entre Bolivia y Paraguay
+        por el control del Chaco Boreal. Sus antecedentes incluyeron la disputa
+        territorial, los problemas fronterizos, los intereses económicos,
+        los fortines y las dificultades diplomáticas.
+      </p>
+
+      <p style="margin-top:8px">
+        El conflicto terminó con el cese de hostilidades en 1935 y el Tratado
+        de Paz, Amistad y Límites firmado en 1938.
+      </p>
+    </div>
+
+    <div class="final-box">
+      <b>Tus decisiones</b>
+
+      <ol style="padding-left:20px;margin-top:8px">
+        ${state.choices.map(c=><li style="margin-bottom:5px">${c}</li>).join('')}
+      </ol>
+    </div>
+
+    <button class="btn" onclick="startScreen()">
+      ↻ VOLVER A JUGAR
+    </button>
+  `;
+}
+
+// ================= INICIAR JUEGO =================
+
+startScreen();
+
+</script>
+</body>
+</html>
